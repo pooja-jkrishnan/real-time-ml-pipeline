@@ -43,4 +43,13 @@ The main components of the system are:
 ---
 
 ## Repository Structure
-
+crypto-report/
+│
+├── analysis/ # Analysis scripts and feature statistics
+├── feature_builder/ # Streaming feature computation logic
+├── inference/ # Real-time inference and metric logging
+├── producer/ # Streaming data producer / replay logic
+├── model/ # Model training scripts and artefacts
+├── docker-compose.yml # Containerised deployment configuration
+├── .gitignore # Git ignore rules
+└── README.md # Project documentation
