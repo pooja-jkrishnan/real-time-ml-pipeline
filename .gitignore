@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# MLflow
+mlruns/
+
+# Data
+data/
+*.csv
+
+# Logs
+logs/
+*.log
+
+# Spark / Streaming
+spark-warehouse/
+checkpoint/
+
+# OS / Windows
+.DS_Store
+Thumbs.db
