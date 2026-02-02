@@ -4,7 +4,7 @@ from kafka import KafkaConsumer
 BOOTSTRAP = "localhost:19092"
 TOPIC = "features.btcusdt.1m.v2"
 OUTFILE = "features_sample.csv"
-MAX_ROWS = 500  # enough for summary stats
+MAX_ROWS = 500  
 
 consumer = KafkaConsumer(
     TOPIC,
@@ -18,12 +18,12 @@ consumer = KafkaConsumer(
 rows = []
 for msg in consumer:
     v = msg.value
-    # keep only rows with required numeric fields
+    
     if all(k in v for k in ["log_ret", "rv_past", "rv_future", "vol_mean"]):
         rows.append({
             "timestamp": v.get("timestamp"),
             "log_return": float(v["log_ret"]),
-            "rolling_volatility": float(v.get("rolling_volatility_5m", v["rv_past"])),  # fallback
+            "rolling_volatility": float(v.get("rolling_volatility_5m", v["rv_past"])),  
             "past_volatility": float(v["rv_past"]),
             "future_volatility": float(v["rv_future"]),
         })
