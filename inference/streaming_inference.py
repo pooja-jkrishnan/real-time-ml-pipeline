@@ -8,9 +8,7 @@ import numpy as np
 from kafka import KafkaConsumer
 
 
-# ======================
-# Configuration
-# ======================
+
 BOOTSTRAP_SERVERS = "localhost:19092"          # host port mapped to Kafka
 FEATURE_TOPIC = "features.btcusdt.1m.v2"       # v2 topic (aligned schema)
 GROUP_ID = "inference-consumer-v2"
@@ -25,9 +23,9 @@ MLFLOW_EXPERIMENT = "realtime-inference-demo"
 RUN_NAME = "realtime-streaming-inference-v2"
 
 
-# ======================
+
 # Helpers
-# ======================
+
 def safe_json_deserializer(m: bytes):
     try:
         return json.loads(m.decode("utf-8"))
@@ -36,21 +34,20 @@ def safe_json_deserializer(m: bytes):
 
 
 def main():
-    # ----------------------
+    
     # Load model
-    # ----------------------
+  
     model = joblib.load(MODEL_PATH)
     print("Model loaded")
 
-    # ----------------------
     # MLflow setup
-    # ----------------------
+
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment(MLFLOW_EXPERIMENT)
 
-    # ----------------------
+  
     # Kafka consumer
-    # ----------------------
+    
     consumer = KafkaConsumer(
         FEATURE_TOPIC,
         bootstrap_servers=BOOTSTRAP_SERVERS,
@@ -60,18 +57,18 @@ def main():
         group_id=GROUP_ID,
     )
 
-    # ----------------------
+  
     # Rolling buffers
-    # ----------------------
+
     y_true_buf = deque(maxlen=ROLLING_WINDOW)
     y_pred_buf = deque(maxlen=ROLLING_WINDOW)
 
     counter = 0
     start_time = time.time()
 
-    # ----------------------
+
     # Start run
-    # ----------------------
+
     with mlflow.start_run(run_name=RUN_NAME):
         # Log config params once
         mlflow.log_param("feature_topic", FEATURE_TOPIC)
@@ -133,7 +130,7 @@ def main():
                     mlflow.log_metric("latency_ms", latency_ms, step=counter)
                     mlflow.log_metric("throughput_eps", throughput, step=counter)
 
-                    # Console output (for screenshots)
+                    # Console output 
                     ts = event.get("timestamp", "n/a")
                     print(
                         f"[{counter}] ts={ts} "
