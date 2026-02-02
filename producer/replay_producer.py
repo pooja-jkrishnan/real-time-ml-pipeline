@@ -36,7 +36,7 @@ def main():
     ap.add_argument("--start", required=True, help="e.g. 2026-01-18T18:00:00Z")
     ap.add_argument("--end", required=True, help="e.g. 2026-01-18T20:00:00Z")
     ap.add_argument("--bootstrap", default="localhost:19092")
-    ap.add_argument("--topic", default="candles.btcusdt.1m")  # keep same topic name
+    ap.add_argument("--topic", default="candles.btcusdt.1m")  
     ap.add_argument("--speed", type=float, default=5.0, help="Replay speed multiplier")
     args = ap.parse_args()
 
