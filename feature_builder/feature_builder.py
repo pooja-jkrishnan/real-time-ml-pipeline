@@ -11,8 +11,8 @@ BOOTSTRAP = "localhost:19092"
 INPUT_TOPIC = "candles.btcusdt.1m"
 OUTPUT_TOPIC = "features.btcusdt.1m.v2"
 
-PAST_WINDOW = 5   # minutes for rolling features
-HORIZON = 5       # minutes ahead for label (future realized vol)
+PAST_WINDOW = 5   
+HORIZON = 5       
 
 
 def safe_json_deserializer(m: bytes):
@@ -37,9 +37,9 @@ def main():
         INPUT_TOPIC,
         bootstrap_servers=BOOTSTRAP,
         value_deserializer=safe_json_deserializer,
-        auto_offset_reset="earliest",           # backfill so v2 topic gets populated
+        auto_offset_reset="earliest",          
         enable_auto_commit=True,
-        group_id="feature-builder-v2-backfill", # new group => fresh offsets
+        group_id="feature-builder-v2-backfill", 
     )
 
     producer = KafkaProducer(
@@ -48,25 +48,25 @@ def main():
     )
 
     # Keep enough history to compute past-window + horizon label
-    closes = deque(maxlen=PAST_WINDOW + HORIZON + 3)  # (ts_ms, ts_iso, close, volume)
-    rets = deque(maxlen=PAST_WINDOW + HORIZON + 2)    # log returns aligned to closes
+    closes = deque(maxlen=PAST_WINDOW + HORIZON + 3) 
+    rets = deque(maxlen=PAST_WINDOW + HORIZON + 2)    
 
-    print("✅ Feature builder v2 started -> outputs rv_past, vol_mean, log_ret, rv_future")
+    print("Feature builder v2 started -> outputs rv_past, vol_mean, log_ret, rv_future")
     print(f"   Input topic:  {INPUT_TOPIC}")
     print(f"   Output topic: {OUTPUT_TOPIC}")
 
     for msg in consumer:
         e = msg.value
 
-        # 1) Skip malformed / non-JSON messages
+        
         if e is None or not isinstance(e, dict):
             continue
 
-        # 2) Skip non-candle messages (e.g., manual test events)
+        
         if "close" not in e or "close_time" not in e or "close_time_iso" not in e:
             continue
 
-        # 3) Parse candle fields safely
+        
         try:
             close = float(e["close"])
             volume = float(e.get("volume", 0.0))
@@ -88,7 +88,7 @@ def main():
 
         rets.append(_log_return(close, prev_close))
 
-        # Need enough returns to compute past-window RV and future RV label
+        
         if len(rets) < (PAST_WINDOW + HORIZON):
             continue
 
